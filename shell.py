@@ -4,12 +4,6 @@ import os
 ROOT_DIR = 'static/shell/'
 
 
-def test():
-    """测试调用脚本 echo输出"""
-    sh_file_path = ROOT_DIR + 'test.sh'
-    os.system('sh ' + sh_file_path + ' aaa')
-
-
 def test_git_pull():
     """调用脚本 从git拉取java项目，并创建镜像启动"""
     sh_file_path = ROOT_DIR + 'centos_jdk_test.sh'
@@ -46,6 +40,29 @@ def run_docker(docker_dict):
     param_arr = [
         'sh',
         sh_file_path,
+        docker_dict.get('image_name'),
+        docker_dict.get('net_name', ''),
+        docker_dict.get('net_ip', ''),
+        '>',
+        tmp_file
+    ]
+    os.system(' '.join(param_arr))
+    file = open(tmp_file)
+    lines = file.readlines()
+    container_id = lines[-1]
+    os.system('rm -rf ' + tmp_file)
+    if container_id.endswith('\n'):
+        return container_id[0: -1]
+    return container_id
+
+
+def run_docker_with_sh(docker_dict):
+    """启动docker容器，并通过挂载shell文件的方式，拉取启动对应项目"""
+    shell_file_name = ROOT_DIR + 'run_docker_with_volumn.sh'
+    tmp_file = gen_unique_id()
+    param_arr = [
+        'sh',
+        shell_file_name,
         docker_dict.get('image_name'),
         docker_dict.get('net_name', ''),
         docker_dict.get('net_ip', ''),
