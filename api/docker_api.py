@@ -66,7 +66,7 @@ def run_docker_container():
     return jsonify({'err_no': err_no, 'err_msg': err_msg})
 
 
-@docker_blue('/docker/run/shell', methods=['POST'])
+@docker_blue.route('/docker/run/shell', methods=['POST'])
 def run_docker_container_with_sh():
     """启动docker容器，并通过挂载shell文件的方式，拉取启动对应项目"""
     run_docker_req = get_request_json_obj()
